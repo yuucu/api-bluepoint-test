@@ -6,5 +6,3 @@ FチームのAPI仕様書
 
 
 <!-- include(users.md) -->
-
-
