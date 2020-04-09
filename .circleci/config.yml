@@ -7,5 +7,38 @@ jobs:
       - checkout
       - run:
           name: convert to html
-          command: aglio -i ./src/main.md -o ./output/main.html
-          # deploy:
+          command: aglio -i ./src/main.md -o ./docs/main.html
+  deploy:
+    docker:
+      # AWS CLI の入った Docker イメージ
+      - image: xueshanf/awscli
+        environment:
+          # アップロード先の S3 バケット名
+          BUCKET_NAME: api-bluepoints-test
+          # アップロードしたいディレクトリ
+          ROOT_DIR: /docs
+    working_directory: ~/app
+    steps:
+      - checkout
+      - deploy:
+          name: "Upload S3"
+          # AWS CLI で S3 にファイルをアップロードするコマンド
+          command: aws s3 sync --exact-timestamps --cache-control "no-cache" --exclude "**/.*" --delete $ROOT_DIR s3://$BUCKET_NAME
+
+   
+workflows:
+  version: 2
+
+  # ワークフロー名
+  deploy:
+    # 実行するジョブ一覧
+    jobs:
+      - build
+      - deploy:
+          filters:
+            # master ブランチのみで実行する
+            branches:
+              only:
+                - master
+          requires:
+            - build
