@@ -16,7 +16,7 @@ jobs:
           # アップロード先の S3 バケット名
           BUCKET_NAME: api-bluepoints-test
           # アップロードしたいディレクトリ
-          ROOT_DIR: /docs
+          ROOT_DIR: ./docs
     working_directory: ~/app
     steps:
       - checkout
